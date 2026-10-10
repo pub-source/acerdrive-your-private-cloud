@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { gateway, formatBytes, isImage, isVideo, isAcceptedMedia, type DriveFile, type Folder } from "@/lib/gateway";
+import { gateway, formatBytes, isImage, isVideo, type DriveFile, type Folder } from "@/lib/gateway";
 import { useGateway } from "@/lib/gateway-context";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +24,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "My Drive — AcerDrive" },
-      { name: "description", content: "Browse, upload and preview photos and videos stored on your own Acer laptop." },
+      { name: "description", content: "Browse, upload, download and manage all file types stored on your own Acer laptop." },
       { property: "og:title", content: "My Drive — AcerDrive" },
-      { property: "og:description", content: "Private photo and video library served from your own antiX gateway." },
+      { property: "og:description", content: "Private file library served from your own antiX gateway." },
     ],
   }),
   component: DrivePage,
@@ -50,7 +50,7 @@ function NotConnected() {
       </div>
       <h1 className="text-3xl font-bold">Gateway not configured</h1>
       <p className="mt-3 text-muted-foreground">
-        AcerDrive stores your photos and videos only on your Acer Aspire One. To browse or upload, install the small
+        AcerDrive stores your files only on your Acer Aspire One. To browse or upload, install the small
         AcerDrive gateway on antiX and point this app at it.
       </p>
       {status === "error" && error && (
@@ -119,9 +119,7 @@ function Drive() {
 
   const startUploads = (list: FileList | File[]) => {
     const arr = Array.from(list);
-    const rejected = arr.filter((f) => !isAcceptedMedia(f));
-    if (rejected.length) toast.error(`Skipped ${rejected.length} non-image/video file(s)`);
-    arr.filter(isAcceptedMedia).forEach((file) => {
+    arr.forEach((file) => {
       const id = `${file.name}-${file.size}-${file.lastModified}-${performance.now()}`;
       setUploads((u) => [...u, { id, name: file.name, progress: 0, state: "uploading" }]);
       gateway
@@ -157,7 +155,7 @@ function Drive() {
         <div className="pointer-events-none fixed inset-0 z-50 grid place-items-center bg-background/80 backdrop-blur-sm">
           <div className="rounded-2xl border-2 border-dashed border-primary bg-card p-10 text-center">
             <Upload className="mx-auto mb-3 h-10 w-10 text-primary" />
-            <p className="font-display text-lg font-semibold">Drop photos & videos to upload to your Acer</p>
+            <p className="font-display text-lg font-semibold">Drop any files to upload to your Acer</p>
           </div>
         </div>
       )}
@@ -170,7 +168,7 @@ function Drive() {
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => setNewFolderOpen(true)}><FolderPlus className="h-4 w-4" />New folder</Button>
           <Button onClick={() => inputRef.current?.click()}><Upload className="h-4 w-4" />Upload</Button>
-          <input ref={inputRef} type="file" multiple accept="image/*,video/*" className="hidden"
+          <input ref={inputRef} type="file" multiple  className="hidden"
             onChange={(e) => { if (e.target.files) startUploads(e.target.files); e.target.value = ""; }} />
         </div>
       </div>
@@ -178,7 +176,7 @@ function Drive() {
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <div className="relative min-w-0 flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your photos & videos" className="pl-9" aria-label="Search files" />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your files" className="pl-9" aria-label="Search files" />
         </div>
         <div className="flex rounded-lg border p-0.5" role="group" aria-label="View mode">
           <Button size="icon" variant={view === "grid" ? "secondary" : "ghost"} aria-pressed={view === "grid"} aria-label="Grid view" onClick={() => setView("grid")}><LayoutGrid className="h-4 w-4" /></Button>
@@ -254,7 +252,7 @@ function Drive() {
           <button onClick={() => inputRef.current?.click()} className="w-full rounded-2xl border-2 border-dashed p-12 text-center transition hover:border-primary">
             <Upload className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
             <p className="font-medium">{query ? "No files match your search" : "No files here yet"}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Drag photos & videos here or click to upload</p>
+            <p className="mt-1 text-sm text-muted-foreground">Drag any files here or click to upload</p>
           </button>
         ) : view === "grid" ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -416,13 +414,13 @@ function PreviewDialog({ file, onClose }: { file: DriveFile | null; onClose: () 
             </DialogHeader>
             <div className="grid max-h-[70vh] place-items-center overflow-hidden rounded-lg bg-muted">
               {failed ? (
-                <div className="p-12 text-center text-sm text-muted-foreground"><FileQuestion className="mx-auto mb-2 h-10 w-10" />Preview unavailable from gateway</div>
+                <div className="p-12 text-center text-sm text-muted-foreground"><FileQuestion className="mx-auto mb-2 h-10 w-10" />Preview unavailable for this file. You can still download it.</div>
               ) : isVideo(file) ? (
                 <video src={gateway.previewUrl(config, file.id)} controls autoPlay crossOrigin={cross} onError={() => setFailed(true)} className="max-h-[70vh] w-full" />
               ) : isImage(file) ? (
                 <img src={gateway.previewUrl(config, file.id)} alt={file.name} crossOrigin={cross} onError={() => setFailed(true)} className="max-h-[70vh] object-contain" />
               ) : (
-                <div className="p-12 text-sm text-muted-foreground">No preview for this file type</div>
+                <div className="p-12 text-sm text-muted-foreground">No browser preview for this file type. Use Download to open it in a compatible app.</div>
               )}
             </div>
             <DialogFooter>
