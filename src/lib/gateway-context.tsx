@@ -16,7 +16,11 @@ const GatewayCtx = createContext<Ctx | null>(null);
 const KEY = "acerdrive.gateway";
 
 export function GatewayProvider({ children }: { children: ReactNode }) {
-  const [config, setConfigState] = useState<GatewayConfig>({ baseUrl: "", credentials: "omit" });
+  const [config, setConfigState] = useState<GatewayConfig>({
+    // Default to this personal AcerDrive gateway; users can change it in Settings.
+    baseUrl: "https://tubig.tailf0978b.ts.net",
+    credentials: "omit",
+  });
   const [loaded, setLoaded] = useState(false);
   const [status, setStatus] = useState<GatewayStatus>("unconfigured");
   const [health, setHealth] = useState<HealthResponse | null>(null);
