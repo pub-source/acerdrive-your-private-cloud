@@ -182,4 +182,4 @@ export function formatBytes(bytes: number): string {
 
 export const isImage = (f: DriveFile) => f.mimeType.startsWith("image/");
 export const isVideo = (f: DriveFile) => f.mimeType.startsWith("video/");
-export const isAcceptedMedia = (file: File) => file.type.startsWith("image/") || file.type.startsWith("video/");
+
