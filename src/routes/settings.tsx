@@ -13,7 +13,7 @@ export const Route = createFileRoute("/settings")({
       { title: "Settings — AcerDrive" },
       { name: "description", content: "Configure and test the connection to your AcerDrive gateway." },
       { property: "og:title", content: "Settings — AcerDrive" },
-      { property: "og:description", content: "Point AcerDrive at your self-hosted antiX gateway." },
+      { property: "og:description", content: "Connect AcerDrive to your private, self-hosted antiX gateway." },
     ],
   }),
   component: SettingsPage,
@@ -36,7 +36,7 @@ function SettingsPage() {
         <h2 className="text-lg font-semibold">Gateway connection</h2>
         <div className="space-y-1.5">
           <label htmlFor="gw" className="text-sm font-medium">Gateway base URL</label>
-          <Input id="gw" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://acer.your-tailnet.ts.net" className="font-mono" />
+          <Input id="gw" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://tubig.your-tailnet.ts.net" className="font-mono" />
           <p className="text-xs text-muted-foreground">
             Use your Tailscale/WireGuard address. This app is served over HTTPS, so browsers block plain-HTTP gateways
             (mixed content) — use HTTPS, e.g. via <code className="font-mono">tailscale serve</code>.
@@ -84,7 +84,7 @@ function SettingsPage() {
       <section className="space-y-3 rounded-xl border bg-card p-5 text-sm">
         <h2 className="flex items-center gap-2 text-lg font-semibold"><ShieldCheck className="h-5 w-5 text-primary" />Privacy</h2>
         <ul className="list-disc space-y-1.5 pl-5 text-muted-foreground">
-          <li>Photos and videos are sent directly from your browser to your Acer gateway. They are never stored in Lovable or any cloud storage.</li>
+          <li>Files are sent directly from your browser to your Acer gateway. They are never stored in Lovable or any cloud storage.</li>
           <li>Only the gateway URL and cookie preference are saved, in this browser’s local storage. No passwords or keys are stored here.</li>
           <li>Privacy is enforced by your gateway and your VPN (Tailscale/WireGuard) — not by this web app. Anyone who can reach the gateway can reach your files, so keep it off the public internet.</li>
           <li>Never expose raw HTTP, SSH or VNC from the Acer to the internet.</li>
